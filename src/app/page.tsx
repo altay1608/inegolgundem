@@ -16,11 +16,8 @@ interface Haber {
 
 export default function Home() {
   const [haberler, setHaberler] = useState<Haber[]>([]);
-  const [filtreliKategori, setFiltreliKategori] = useState<string>('TÜMÜ');
   const [yukleniyor, setYukleniyor] = useState(true);
   const [aramaMetni, setAramaMetni] = useState('');
-
-  const kategoriler = ['TÜMÜ', 'GÜNDEM', 'EKONOMİ', 'SPOR', 'KÜLTÜR', 'EĞİTİM', 'SAĞLIK'];
 
   useEffect(() => {
     const haberleriGetir = async () => {
@@ -47,9 +44,7 @@ export default function Home() {
   }, []);
 
   const filtrelenmisHaberler = haberler.filter((haber) => {
-    const kategoriUyumu = filtreliKategori === 'TÜMÜ' || haber.kategori === filtreliKategori;
-    const aramaUyumu = haber.baslik.toLowerCase().includes(aramaMetni.toLowerCase());
-    return kategoriUyumu && aramaUyumu;
+    return haber.baslik.toLowerCase().includes(aramaMetni.toLowerCase());
   });
 
   const mansetHaber = filtrelenmisHaberler[0];
@@ -99,22 +94,6 @@ export default function Home() {
               </div>
             </div>
 
-            <nav className="hidden lg:flex items-center gap-1">
-              {['GÜNDEM', 'EKONOMİ', 'SPOR', 'KÜLTÜR'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setFiltreliKategori(item)}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                    filtreliKategori === item
-                      ? 'bg-white text-red-900'
-                      : 'text-white text-opacity-80 hover:bg-white hover:bg-opacity-10'
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
-            </nav>
-
             <div className="relative hidden md:block">
               <input
                 type="text"
@@ -155,6 +134,50 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Reklam Banner */}
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <a 
+            href="https://maps.google.com/?q=İhraç+Fazlası+Giyim+İnegöl" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col md:flex-row items-center justify-between gap-4 bg-gradient-to-r from-pink-900/30 via-slate-800/50 to-pink-900/30 rounded-2xl p-4 md:p-5 border border-pink-500/20 hover:border-pink-500/40 transition-all duration-300 group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-pink-600 to-pink-800 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-pink-600/30">
+                İF
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-white font-bold text-lg">İhraç Fazlası Giyim</h3>
+                  <span className="bg-yellow-500 text-slate-900 text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">REKLAM</span>
+                </div>
+                <p className="text-white/60 text-sm">Kaliteli Giyim, Uygun Fiyat</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <span className="text-yellow-400 text-sm">★★★★★</span>
+                  <span className="text-white/50 text-xs">5.0 (57 yorum)</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-6 text-white/70 text-sm">
+              <div className="flex items-center gap-2">
+                <span>📍</span>
+                <span>Ertuğrulgazi, Kozluca Yolu 13/AA</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>📞</span>
+                <span className="font-semibold text-white">0538 479 36 96</span>
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-r from-pink-600 to-pink-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm group-hover:from-pink-500 group-hover:to-pink-600 transition-all shadow-lg shadow-pink-600/30">
+              🗺️ Yol Tarifi Al
+            </div>
+          </a>
+        </div>
+      </div>
+
       <main className="max-w-7xl mx-auto px-4 py-8">
         {mansetHaber && (
           <section className="mb-12">
@@ -174,7 +197,7 @@ export default function Home() {
               
               <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
                 <span className="inline-block bg-red-900 text-white px-4 py-1.5 rounded-full text-sm font-bold mb-4 shadow-lg">
-                  {mansetHaber.kategori}
+                  MANŞET
                 </span>
                 <h2 className="text-2xl md:text-4xl lg:text-5xl font-black text-white mb-4 leading-tight drop-shadow-lg">
                   {mansetHaber.baslik}
@@ -192,58 +215,46 @@ export default function Home() {
           </section>
         )}
 
-        <div className="flex flex-wrap gap-2 mb-8 justify-center">
-          {kategoriler.map((kategori) => (
-            <button
-              key={kategori}
-              onClick={() => setFiltreliKategori(kategori)}
-              className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                filtreliKategori === kategori
-                  ? 'bg-red-900 text-white shadow-lg scale-105'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 shadow-md hover:shadow-lg'
-              }`}
-            >
-              {kategori}
-            </button>
-          ))}
-        </div>
-
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {digerHaberler.map((haber) => (
-            <article
-              key={haber.id}
-              className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-1"
-            >
-              <div className="relative aspect-video overflow-hidden">
-                <img
-                  src={haber.resim_url || '/son-dakika.png'}
-                  alt={haber.baslik}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/son-dakika.png';
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span className="absolute top-4 left-4 bg-red-900 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                  {haber.kategori}
-                </span>
-              </div>
-              
-              <div className="p-6">
-                <h3 className="text-lg font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-red-900 transition-colors duration-300">
-                  {haber.baslik}
-                </h3>
-                <p className="text-slate-500 text-sm mb-4 line-clamp-2">
-                  {haber.ozet || haber.icerik?.substring(0, 120)}...
-                </p>
-                <div className="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-100">
-                  <span>{haber.yazar}</span>
-                  <span>{tarihFormatla(haber.created_at)}</span>
+        <section>
+          <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+            <span className="w-1 h-8 bg-red-900 rounded"></span>
+            Son Haberler
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {digerHaberler.map((haber) => (
+              <article
+                key={haber.id}
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-1"
+              >
+                <div className="relative aspect-video overflow-hidden">
+                  <img
+                    src={haber.resim_url || '/son-dakika.png'}
+                    alt={haber.baslik}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/son-dakika.png';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-              </div>
-            </article>
-          ))}
+                
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-red-900 transition-colors duration-300">
+                    {haber.baslik}
+                  </h3>
+                  <p className="text-slate-500 text-sm mb-4 line-clamp-2">
+                    {haber.ozet || haber.icerik?.substring(0, 120)}...
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-100">
+                    <span>{haber.yazar}</span>
+                    <span>{tarihFormatla(haber.created_at)}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
 
         {filtrelenmisHaberler.length === 0 && (
@@ -254,14 +265,14 @@ export default function Home() {
               </svg>
             </div>
             <h3 className="text-xl font-bold text-slate-700 mb-2">Haber Bulunamadı</h3>
-            <p className="text-slate-500">Bu kategoride henüz haber bulunmuyor.</p>
+            <p className="text-slate-500">Aradığınız kriterlere uygun haber bulunmuyor.</p>
           </div>
         )}
       </main>
 
       <footer className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white mt-16">
         <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
@@ -275,19 +286,6 @@ export default function Home() {
               <p className="text-white text-opacity-70 text-sm leading-relaxed max-w-md">
                 İnegöl ve çevresinden en güncel haberler, son dakika gelişmeleri ve yerel haberler için güvenilir kaynağınız.
               </p>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-lg mb-4">Kategoriler</h4>
-              <ul className="space-y-2">
-                {['Gündem', 'Ekonomi', 'Spor', 'Kültür', 'Eğitim'].map((item) => (
-                  <li key={item}>
-                    <button className="text-white text-opacity-70 hover:text-white transition-colors text-sm">
-                      {item}
-                    </button>
-                  </li>
-                ))}
-              </ul>
             </div>
 
             <div>
