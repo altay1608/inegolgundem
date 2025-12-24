@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface Haber {
   id: number;
@@ -13,6 +14,7 @@ interface Haber {
   aktif: boolean;
   created_at: string;
   kaynak_url: string;
+  slug: string;
 }
 
 export default function Home() {
@@ -159,10 +161,10 @@ export default function Home() {
             <div className="overflow-hidden flex-1">
               <div className="whitespace-nowrap overflow-x-auto">
                 {haberler.slice(0, 5).map((haber, index) => (
-                  <span key={haber.id} className="text-white text-opacity-90 text-sm mx-4 inline-block">
+                  <Link key={haber.id} href={`/haber/${haber.slug}`} className="text-white text-opacity-90 text-sm mx-4 inline-block hover:text-opacity-100">
                     {haber.baslik}
                     {index < 4 && <span className="mx-4 text-white text-opacity-30">•</span>}
-                  </span>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -250,10 +252,8 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {mansetHaber && (
           <section className="mb-12">
-            <a 
-              href={mansetHaber.kaynak_url} 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <Link 
+              href={`/haber/${mansetHaber.slug}`}
               className="block relative group overflow-hidden rounded-3xl shadow-2xl bg-slate-900 cursor-pointer"
             >
               <div className="aspect-video md:aspect-[21/9] relative">
@@ -294,7 +294,7 @@ export default function Home() {
                   )}
                 </div>
               </div>
-            </a>
+            </Link>
           </section>
         )}
 
@@ -306,11 +306,9 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {digerHaberler.map((haber) => (
-              <a
+              <Link
                 key={haber.id}
-                href={haber.kaynak_url}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`/haber/${haber.slug}`}
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-1 cursor-pointer block"
               >
                 <div className="relative aspect-video overflow-hidden">
@@ -325,8 +323,8 @@ export default function Home() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-                    <span>🔗</span>
-                    Devamını Oku
+                    <span>📖</span>
+                    Haberi Oku
                   </div>
                 </div>
                 
@@ -346,7 +344,7 @@ export default function Home() {
                     )}
                   </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </section>
