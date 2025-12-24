@@ -84,6 +84,32 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Sol Sabit Banner - Sadece büyük ekranlarda */}
+      <a
+        href="https://share.google/v4rhTAq6S12QEAEMS"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hidden xl:flex fixed left-4 top-1/2 -translate-y-1/2 z-40 flex-col items-center bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-4 shadow-2xl border border-orange-500/30 hover:border-orange-500/60 transition-all duration-300 group w-44"
+      >
+        <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full mb-3 animate-pulse">REKLAM</span>
+        <img 
+          src="/yalduz-cam-logo.jpeg" 
+          alt="Yalduz Cam" 
+          className="w-28 h-28 object-contain rounded-xl mb-3 group-hover:scale-105 transition-transform duration-300"
+        />
+        <h3 className="text-white font-bold text-sm text-center mb-1">YALDUZ CAM</h3>
+        <p className="text-orange-400 text-xs text-center mb-3">Ayna İşleme Tesisi</p>
+        <div className="text-white/70 text-xs text-center space-y-2">
+          <div className="flex items-center gap-1 justify-center">
+            <span>📞</span>
+            <span className="font-semibold text-white">0506 779 90 20</span>
+          </div>
+        </div>
+        <div className="mt-3 bg-gradient-to-r from-orange-500 to-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold group-hover:from-orange-400 group-hover:to-red-500 transition-all">
+          🗺️ Yol Tarifi Al
+        </div>
+      </a>
+
       <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 shadow-2xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 relative">
           <div className="flex items-center justify-between">
@@ -182,6 +208,40 @@ export default function Home() {
             
             <div className="bg-gradient-to-r from-pink-600 to-pink-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm group-hover:from-pink-500 group-hover:to-pink-600 transition-all shadow-lg shadow-pink-600/30">
               🗺️ Yol Tarifi Al
+            </div>
+          </a>
+        </div>
+      </div>
+
+      {/* Mobil için Yalduz Cam Banner */}
+      <div className="xl:hidden bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-orange-500/20">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <a 
+            href="https://share.google/v4rhTAq6S12QEAEMS" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between gap-4 bg-gradient-to-r from-orange-900/30 via-slate-800/50 to-orange-900/30 rounded-xl p-3 border border-orange-500/20 hover:border-orange-500/40 transition-all duration-300 group"
+          >
+            <div className="flex items-center gap-3">
+              <img 
+                src="/yalduz-cam-logo.jpeg" 
+                alt="Yalduz Cam" 
+                className="w-12 h-12 object-contain rounded-lg"
+              />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-white font-bold text-sm">Yalduz Cam</h3>
+                  <span className="bg-orange-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">REKLAM</span>
+                </div>
+                <p className="text-orange-400 text-xs">Ayna İşleme Tesisi</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <span className="text-white text-sm hidden sm:block">📞 0506 779 90 20</span>
+              <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+                Ara
+              </div>
             </div>
           </a>
         </div>
