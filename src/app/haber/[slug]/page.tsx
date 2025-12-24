@@ -41,7 +41,6 @@ export default function HaberDetay() {
           setHaber(data[0]);
         }
 
-        // Benzer haberleri getir
         const benzerResponse = await fetch(
           `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/haberler?aktif=eq.true&order=created_at.desc&limit=4`,
           {
@@ -114,7 +113,6 @@ export default function HaberDetay() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Header */}
       <header className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 shadow-2xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -134,7 +132,6 @@ export default function HaberDetay() {
                 </p>
               </div>
             </Link>
-
             <Link href="/" className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               ← Ana Sayfa
             </Link>
@@ -142,22 +139,18 @@ export default function HaberDetay() {
         </div>
       </header>
 
-      {/* Haber İçeriği */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         <article>
-          {/* Breadcrumb */}
           <nav className="text-sm text-slate-500 mb-6">
             <Link href="/" className="hover:text-red-900">Ana Sayfa</Link>
             <span className="mx-2">›</span>
             <span className="text-slate-700">Haber</span>
           </nav>
 
-          {/* Başlık */}
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight">
             {haber.baslik}
           </h1>
 
-          {/* Meta Bilgiler */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-8 pb-6 border-b border-slate-200">
             <span className="flex items-center gap-1">
               <span>📅</span>
@@ -175,7 +168,6 @@ export default function HaberDetay() {
             )}
           </div>
 
-          {/* Görsel */}
           <div className="relative aspect-video rounded-2xl overflow-hidden mb-8 shadow-lg">
             <img
               src={haber.resim_url || '/son-dakika.png'}
@@ -188,21 +180,18 @@ export default function HaberDetay() {
             />
           </div>
 
-          {/* Özet */}
           <div className="bg-slate-100 rounded-xl p-6 mb-8">
             <p className="text-lg text-slate-700 leading-relaxed font-medium">
               {haber.ozet || haber.icerik?.substring(0, 300)}
             </p>
           </div>
 
-          {/* İçerik */}
           <div className="prose prose-lg max-w-none mb-8">
             <p className="text-slate-600 leading-relaxed whitespace-pre-line">
               {haber.icerik}
             </p>
           </div>
 
-          {/* Kaynak Butonu */}
           {haber.kaynak_url && (
             <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-6 mb-8">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -212,7 +201,7 @@ export default function HaberDetay() {
                     📰 {kaynakAdiGetir(haber.kaynak_url)} sitesini ziyaret edin
                   </p>
                 </div>
-                
+                <a
                   href={haber.kaynak_url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -225,10 +214,9 @@ export default function HaberDetay() {
             </div>
           )}
 
-          {/* Sosyal Paylaşım */}
           <div className="flex items-center gap-4 py-6 border-t border-b border-slate-200 mb-8">
             <span className="text-slate-600 font-medium">Paylaş:</span>
-            
+            <a
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(haber.baslik)}&url=${encodeURIComponent(`https://inegolgundem.com/haber/${haber.slug}`)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -236,7 +224,7 @@ export default function HaberDetay() {
             >
               𝕏
             </a>
-            
+            <a
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://inegolgundem.com/haber/${haber.slug}`)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -244,7 +232,7 @@ export default function HaberDetay() {
             >
               📘
             </a>
-            
+            <a
               href={`https://wa.me/?text=${encodeURIComponent(haber.baslik + ' - https://inegolgundem.com/haber/' + haber.slug)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -255,7 +243,6 @@ export default function HaberDetay() {
           </div>
         </article>
 
-        {/* Benzer Haberler */}
         {benzerHaberler.length > 0 && (
           <section>
             <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
@@ -292,7 +279,6 @@ export default function HaberDetay() {
         )}
       </main>
 
-      {/* Footer */}
       <footer className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white mt-16">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center text-white text-opacity-50 text-sm">
