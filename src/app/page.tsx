@@ -12,6 +12,7 @@ interface Haber {
   yazar: string;
   aktif: boolean;
   created_at: string;
+  kaynak_url: string;
 }
 
 export default function Home() {
@@ -56,6 +57,15 @@ export default function Home() {
       month: '2-digit',
       year: 'numeric',
     });
+  };
+
+  const kaynakAdiGetir = (url: string) => {
+    try {
+      const hostname = new URL(url).hostname;
+      return hostname.replace('www.', '');
+    } catch {
+      return 'Kaynak';
+    }
   };
 
   if (yukleniyor) {
@@ -181,7 +191,12 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {mansetHaber && (
           <section className="mb-12">
-            <div className="relative group overflow-hidden rounded-3xl shadow-2xl bg-slate-900">
+            <a 
+              href={mansetHaber.kaynak_url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block relative group overflow-hidden rounded-3xl shadow-2xl bg-slate-900 cursor-pointer"
+            >
               <div className="aspect-video md:aspect-[21/9] relative">
                 <img
                   src={mansetHaber.resim_url || '/son-dakika.png'}
@@ -209,9 +224,18 @@ export default function Home() {
                   <span>{mansetHaber.yazar}</span>
                   <span>•</span>
                   <span>{tarihFormatla(mansetHaber.created_at)}</span>
+                  {mansetHaber.kaynak_url && (
+                    <>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <span>📰</span>
+                        Kaynak: {kaynakAdiGetir(mansetHaber.kaynak_url)}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
-            </div>
+            </a>
           </section>
         )}
 
@@ -223,9 +247,12 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {digerHaberler.map((haber) => (
-              <article
+              
                 key={haber.id}
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-1"
+                href={haber.kaynak_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-1 cursor-pointer block"
               >
                 <div className="relative aspect-video overflow-hidden">
                   <img
@@ -238,6 +265,10 @@ export default function Home() {
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                    <span>🔗</span>
+                    Devamını Oku
+                  </div>
                 </div>
                 
                 <div className="p-6">
@@ -248,11 +279,15 @@ export default function Home() {
                     {haber.ozet || haber.icerik?.substring(0, 120)}...
                   </p>
                   <div className="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-100">
-                    <span>{haber.yazar}</span>
                     <span>{tarihFormatla(haber.created_at)}</span>
+                    {haber.kaynak_url && (
+                      <span className="text-red-800 font-medium">
+                        📰 {kaynakAdiGetir(haber.kaynak_url)}
+                      </span>
+                    )}
                   </div>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </section>
@@ -284,7 +319,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-white text-opacity-70 text-sm leading-relaxed max-w-md">
-                İnegöl ve çevresinden en güncel haberler, son dakika gelişmeleri ve yerel haberler için güvenilir kaynağınız.
+                İnegöl ve çevresinden en güncel haberler, son dakika gelişmeleri ve yerel haberler için güvenilir kaynağınız. Haberler ilgili kaynaklardan derlenmektedir.
               </p>
             </div>
 
@@ -299,6 +334,7 @@ export default function Home() {
 
           <div className="border-t border-white border-opacity-10 mt-8 pt-8 text-center text-white text-opacity-50 text-sm">
             <p>© 2025 İnegöl Gündem. Tüm hakları saklıdır.</p>
+            <p className="mt-2 text-xs">Bu site bir haber agregatorüdür. Haberler ilgili kaynaklardan derlenmekte olup, tüm haklar ilgili kaynaklara aittir.</p>
           </div>
         </div>
       </footer>
