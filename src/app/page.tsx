@@ -1,17 +1,23 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { createClient } from '@supabase/supabase-js'
+
+// SUPABASE CLIENT
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 interface Haber {
   id: number
   kategori: string
   baslik: string
   ozet: string
-  tarih: string
-  saat: string
-  resim: string
-  yazar: string
-  okunmaSuresi?: string
+  icerik?: string
+  tarih?: string
+  resim_url?: string
+  yazar?: string
+  created_at?: string
 }
 
 const kategoriler = [
@@ -24,19 +30,6 @@ const kategoriler = [
   { id: 'saglik', isim: 'Sağlık', renk: '#0891B2', icon: '🏥' },
 ]
 
-const N8N_WEBHOOK_URL = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || ''
-
-const ornekHaberler: Haber[] = [
-  { id: 1, kategori: "GÜNDEM", baslik: "İnegöl Belediyesi'nden Büyük Yatırım: Yeni Sosyal Tesis Kompleksi", ozet: "Belediye Başkanı, ilçenin doğu yakasında yapılacak yeni sosyal tesisin temelini önümüzdeki ay atacaklarını açıkladı.", tarih: "9 Ocak 2025", saat: "14:32", resim: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=800&q=80", yazar: "Ahmet Yılmaz", okunmaSuresi: "4 dk" },
-  { id: 2, kategori: "EKONOMİ", baslik: "Mobilya Sektöründe Tarihi Rekor: İhracat %45 Arttı", ozet: "İnegöl mobilya sektörü 2024 yılında ihracatta tarihi bir başarıya imza attı.", tarih: "9 Ocak 2025", saat: "12:15", resim: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80", yazar: "Zeynep Kaya", okunmaSuresi: "5 dk" },
-  { id: 3, kategori: "SPOR", baslik: "İnegölspor Zirve Yarışında: Deplasmandan 3 Puanla Döndü", ozet: "Ligin kritik maçında İnegölspor deplasmanda 2-1 galip geldi.", tarih: "8 Ocak 2025", saat: "21:45", resim: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80", yazar: "Murat Demir", okunmaSuresi: "3 dk" },
-  { id: 4, kategori: "KÜLTÜR", baslik: "Tarihi Osmanlı Çarşısı Restorasyonu Tamamlandı", ozet: "Osmanlı döneminden kalma tarihi çarşı, özgün mimarisiyle yeniden hayat buldu.", tarih: "8 Ocak 2025", saat: "16:20", resim: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80", yazar: "Elif Arslan", okunmaSuresi: "4 dk" },
-  { id: 5, kategori: "YAŞAM", baslik: "Modern Kütüphane Açıldı: 50.000 Kitap Kapasitesi", ozet: "İnegöl'ün en büyük kütüphanesi kapılarını açtı.", tarih: "7 Ocak 2025", saat: "10:00", resim: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&q=80", yazar: "Can Özdemir", okunmaSuresi: "3 dk" },
-  { id: 6, kategori: "SAĞLIK", baslik: "Devlet Hastanesine Son Teknoloji MR Cihazı", ozet: "Yeni nesil MR cihazı sayesinde vatandaşlar artık tetkik için il dışına gitmek zorunda kalmayacak.", tarih: "7 Ocak 2025", saat: "09:30", resim: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&q=80", yazar: "Dr. Ayşe Çelik", okunmaSuresi: "4 dk" },
-  { id: 7, kategori: "GÜNDEM", baslik: "Yeni Metro Hattı Projesi İçin Fizibilite Çalışmaları", ozet: "İnegöl-Bursa arası hızlı ulaşım için metro projesi masaya yatırıldı.", tarih: "6 Ocak 2025", saat: "15:00", resim: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80", yazar: "Mehmet Aydın", okunmaSuresi: "5 dk" },
-  { id: 8, kategori: "EKONOMİ", baslik: "Organize Sanayi'de 15 Yeni Fabrika Yatırımı", ozet: "OSB'de 15 yeni fabrika için yer tahsisi yapıldı.", tarih: "6 Ocak 2025", saat: "11:30", resim: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80", yazar: "Ali Kara", okunmaSuresi: "4 dk" }
-]
-
 const sonDakikaHaberleri = [
   "🔴 Belediye'den su kesintisi duyurusu: Yarın 4 mahallede su kesilecek",
   "⚽ İnegölspor'a yeni transfer müjdesi",
@@ -45,9 +38,30 @@ const sonDakikaHaberleri = [
 ]
 
 function getKategoriRenk(kategori: string): string {
+  if (!kategori) return '#666'
   const k = kategori.toLowerCase().replace(/[üışğöç]/g, c => ({ü:'u',ı:'i',ş:'s',ğ:'g',ö:'o',ç:'c'}[c] || c))
   const kat = kategoriler.find(x => x.isim.toLowerCase().replace(/[üışğöç]/g, c => ({ü:'u',ı:'i',ş:'s',ğ:'g',ö:'o',ç:'c'}[c] || c)) === k)
   return kat?.renk || '#666'
+}
+
+function formatTarih(dateStr?: string): string {
+  if (!dateStr) return ''
+  try {
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
+  } catch {
+    return dateStr
+  }
+}
+
+function formatSaat(dateStr?: string): string {
+  if (!dateStr) return ''
+  try {
+    const date = new Date(dateStr)
+    return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+  } catch {
+    return ''
+  }
 }
 
 // İHRAÇ FAZLASI GİYİM BANNER
@@ -209,7 +223,7 @@ function YalduzWebAd({ variant = 'horizontal' }: { variant?: 'horizontal' | 'squ
 }
 
 export default function Home() {
-  const [haberler, setHaberler] = useState<Haber[]>(ornekHaberler)
+  const [haberler, setHaberler] = useState<Haber[]>([])
   const [yukleniyor, setYukleniyor] = useState(true)
   const [scrollY, setScrollY] = useState(0)
   const [aktifKategori, setAktifKategori] = useState('tumu')
@@ -218,16 +232,26 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState('')
   const [aramaAcik, setAramaAcik] = useState(false)
   const [aramaMetni, setAramaMetni] = useState('')
-  const [headerAd, setHeaderAd] = useState(0) // 0: İhraç Fazlası, 1: Yalduz
+  const [headerAd, setHeaderAd] = useState(0)
 
+  // SUPABASE'DEN HABERLERİ ÇEK
   const loadHaberler = useCallback(async () => {
     setYukleniyor(true)
     try {
-      if (N8N_WEBHOOK_URL) {
-        const res = await fetch(N8N_WEBHOOK_URL, { cache: 'no-store' })
-        if (res.ok) { const data = await res.json(); if (data.length) setHaberler(data) }
+      const { data, error } = await supabase
+        .from('haberler')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(50)
+      
+      if (error) {
+        console.error('Supabase error:', error)
+      } else if (data && data.length > 0) {
+        setHaberler(data)
       }
-    } catch (e) { console.error(e) }
+    } catch (e) {
+      console.error('Fetch error:', e)
+    }
     setYukleniyor(false)
   }, [])
 
@@ -235,16 +259,18 @@ export default function Home() {
   useEffect(() => { const h = () => setScrollY(window.scrollY); window.addEventListener('scroll', h, { passive: true }); return () => window.removeEventListener('scroll', h) }, [])
   useEffect(() => { const i = setInterval(() => setSonDakikaIndex(p => (p + 1) % sonDakikaHaberleri.length), 5000); return () => clearInterval(i) }, [])
   useEffect(() => { const u = () => setCurrentTime(new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })); u(); const i = setInterval(u, 1000); return () => clearInterval(i) }, [])
-  // Header reklamı değiştir (10 saniyede bir)
   useEffect(() => { const i = setInterval(() => setHeaderAd(p => (p + 1) % 2), 10000); return () => clearInterval(i) }, [])
 
-  const filtrelenmis = aktifKategori === 'tumu' ? haberler : haberler.filter(h => h.kategori.toLowerCase().replace(/[üışğöç]/g, c => ({ü:'u',ı:'i',ş:'s',ğ:'g',ö:'o',ç:'c'}[c] || c)).includes(aktifKategori))
-  const aranan = aramaMetni ? filtrelenmis.filter(h => h.baslik.toLowerCase().includes(aramaMetni.toLowerCase())) : filtrelenmis
-  const manset = aranan[0], vitrin = aranan.slice(1, 3), grid = aranan.slice(3, 7), liste = aranan.slice(7)
+  const filtrelenmis = aktifKategori === 'tumu' ? haberler : haberler.filter(h => {
+    const hKat = (h.kategori || '').toLowerCase().replace(/[üışğöç]/g, c => ({ü:'u',ı:'i',ş:'s',ğ:'g',ö:'o',ç:'c'}[c] || c))
+    return hKat.includes(aktifKategori)
+  })
+  const aranan = aramaMetni ? filtrelenmis.filter(h => (h.baslik || '').toLowerCase().includes(aramaMetni.toLowerCase())) : filtrelenmis
+  const manset = aranan[0], vitrin = aranan.slice(1, 3), grid = aranan.slice(3, 7), liste = aranan.slice(7, 15)
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
-      {/* HEADER REKLAM - Dönüşümlü */}
+      {/* HEADER REKLAM */}
       <div className="transition-all duration-500">
         {headerAd === 0 ? <IhracFazlasiAd variant="horizontal" /> : <YalduzWebAd variant="horizontal" />}
       </div>
@@ -284,21 +310,20 @@ export default function Home() {
 
       {/* MAIN */}
       <main className="max-w-7xl mx-auto px-4 py-6 lg:py-8">
-        {yukleniyor ? <div className="flex items-center justify-center py-20"><div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div></div> : aranan.length === 0 ? <div className="text-center py-20"><p className="text-6xl mb-4">🔍</p><h3 className="text-xl font-semibold mb-2">Sonuç Bulunamadı</h3><button onClick={() => { setAramaMetni(''); setAktifKategori('tumu') }} className="mt-4 px-6 py-2 bg-red-600 text-white rounded-full">Temizle</button></div> : (
+        {yukleniyor ? <div className="flex items-center justify-center py-20"><div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div></div> : aranan.length === 0 ? <div className="text-center py-20"><p className="text-6xl mb-4">🔍</p><h3 className="text-xl font-semibold mb-2">Haber Bulunamadı</h3><p className="text-gray-500 mb-4">Henüz haber eklenmemiş veya bağlantı sorunu var.</p><button onClick={() => { setAramaMetni(''); setAktifKategori('tumu'); loadHaberler() }} className="mt-4 px-6 py-2 bg-red-600 text-white rounded-full">Yenile</button></div> : (
           <div className="grid grid-cols-12 gap-6 lg:gap-8">
             <div className="col-span-12 lg:col-span-8 space-y-6">
-              {manset && <article className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer"><div className="relative aspect-[16/9] overflow-hidden"><img src={manset.resim} alt={manset.baslik} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" /><div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div><span className="absolute top-4 left-4 px-3 py-1.5 text-xs font-bold text-white rounded-full uppercase" style={{ backgroundColor: getKategoriRenk(manset.kategori) }}>{manset.kategori}</span><div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8"><h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight mb-3">{manset.baslik}</h2><p className="text-white/80 text-sm sm:text-base line-clamp-2 mb-4">{manset.ozet}</p><div className="flex items-center gap-4 text-white/60 text-sm"><span>{manset.yazar}</span><span>{manset.tarih}</span></div></div></div></article>}
+              {manset && <article className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer"><div className="relative aspect-[16/9] overflow-hidden"><img src={manset.resim_url || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'} alt={manset.baslik} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" /><div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div><span className="absolute top-4 left-4 px-3 py-1.5 text-xs font-bold text-white rounded-full uppercase" style={{ backgroundColor: getKategoriRenk(manset.kategori) }}>{manset.kategori}</span><div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8"><h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight mb-3">{manset.baslik}</h2><p className="text-white/80 text-sm sm:text-base line-clamp-2 mb-4">{manset.ozet}</p><div className="flex items-center gap-4 text-white/60 text-sm"><span>{manset.yazar || 'Editör'}</span><span>{formatTarih(manset.created_at)}</span></div></div></div></article>}
               
-              {/* YALDUZ WEB REKLAM */}
               <YalduzWebAd variant="wide" />
 
-              {vitrin.length > 0 && <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">{vitrin.map(h => <article key={h.id} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg cursor-pointer"><div className="relative aspect-[4/3] overflow-hidden"><img src={h.resim} alt={h.baslik} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /><span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold text-white rounded-full uppercase" style={{ backgroundColor: getKategoriRenk(h.kategori) }}>{h.kategori}</span></div><div className="p-4"><h3 className="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-red-600 mb-2">{h.baslik}</h3><p className="text-gray-500 text-sm line-clamp-2 mb-3">{h.ozet}</p><div className="flex justify-between text-xs text-gray-400"><span>{h.yazar}</span><span>{h.tarih}</span></div></div></article>)}</div>}
+              {vitrin.length > 0 && <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">{vitrin.map(h => <article key={h.id} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg cursor-pointer"><div className="relative aspect-[4/3] overflow-hidden"><img src={h.resim_url || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'} alt={h.baslik} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /><span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold text-white rounded-full uppercase" style={{ backgroundColor: getKategoriRenk(h.kategori) }}>{h.kategori}</span></div><div className="p-4"><h3 className="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-red-600 mb-2">{h.baslik}</h3><p className="text-gray-500 text-sm line-clamp-2 mb-3">{h.ozet}</p><div className="flex justify-between text-xs text-gray-400"><span>{h.yazar || 'Editör'}</span><span>{formatTarih(h.created_at)}</span></div></div></article>)}</div>}
               
-              {/* İHRAÇ FAZLASI REKLAM */}
               <IhracFazlasiAd variant="wide" />
 
-              {grid.length > 0 && <div><div className="flex items-center gap-3 mb-4"><h2 className="text-xl font-bold">Son Haberler</h2><div className="flex-1 h-px bg-gray-200"></div></div><div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{grid.map(h => <article key={h.id} className="group flex gap-4 bg-white p-4 rounded-xl hover:bg-gray-50 cursor-pointer"><div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-lg overflow-hidden"><img src={h.resim} alt={h.baslik} className="w-full h-full object-cover group-hover:scale-110 transition-transform" /></div><div className="flex-1 min-w-0"><span className="inline-block px-2 py-0.5 text-[10px] font-bold text-white rounded mb-2" style={{ backgroundColor: getKategoriRenk(h.kategori) }}>{h.kategori}</span><h3 className="text-sm font-semibold line-clamp-2 group-hover:text-red-600">{h.baslik}</h3><p className="text-xs text-gray-400 mt-2">{h.tarih}</p></div></article>)}</div></div>}
-              {liste.length > 0 && <div><div className="flex items-center gap-3 mb-4"><h2 className="text-xl font-bold">Diğer Haberler</h2><div className="flex-1 h-px bg-gray-200"></div></div><div className="space-y-3">{liste.map((h, i) => <article key={h.id} className="group flex items-center gap-4 p-4 bg-white rounded-xl hover:bg-gray-50 cursor-pointer"><span className="text-3xl font-black text-gray-200 w-8">{String(i+1).padStart(2,'0')}</span><div className="flex-1"><div className="flex items-center gap-2 mb-1"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: getKategoriRenk(h.kategori) }}></span><span className="text-xs font-medium text-gray-500">{h.kategori}</span></div><h3 className="text-sm font-semibold line-clamp-1 group-hover:text-red-600">{h.baslik}</h3></div><span className="text-xs text-gray-400">{h.saat}</span></article>)}</div></div>}
+              {grid.length > 0 && <div><div className="flex items-center gap-3 mb-4"><h2 className="text-xl font-bold">Son Haberler</h2><div className="flex-1 h-px bg-gray-200"></div></div><div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{grid.map(h => <article key={h.id} className="group flex gap-4 bg-white p-4 rounded-xl hover:bg-gray-50 cursor-pointer"><div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-lg overflow-hidden"><img src={h.resim_url || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'} alt={h.baslik} className="w-full h-full object-cover group-hover:scale-110 transition-transform" /></div><div className="flex-1 min-w-0"><span className="inline-block px-2 py-0.5 text-[10px] font-bold text-white rounded mb-2" style={{ backgroundColor: getKategoriRenk(h.kategori) }}>{h.kategori}</span><h3 className="text-sm font-semibold line-clamp-2 group-hover:text-red-600">{h.baslik}</h3><p className="text-xs text-gray-400 mt-2">{formatTarih(h.created_at)}</p></div></article>)}</div></div>}
+              
+              {liste.length > 0 && <div><div className="flex items-center gap-3 mb-4"><h2 className="text-xl font-bold">Diğer Haberler</h2><div className="flex-1 h-px bg-gray-200"></div></div><div className="space-y-3">{liste.map((h, i) => <article key={h.id} className="group flex items-center gap-4 p-4 bg-white rounded-xl hover:bg-gray-50 cursor-pointer"><span className="text-3xl font-black text-gray-200 w-8">{String(i+1).padStart(2,'0')}</span><div className="flex-1"><div className="flex items-center gap-2 mb-1"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: getKategoriRenk(h.kategori) }}></span><span className="text-xs font-medium text-gray-500">{h.kategori}</span></div><h3 className="text-sm font-semibold line-clamp-1 group-hover:text-red-600">{h.baslik}</h3></div><span className="text-xs text-gray-400">{formatSaat(h.created_at)}</span></article>)}</div></div>}
             </div>
 
             {/* SIDEBAR */}
