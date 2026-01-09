@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-// TİPLER
 interface Haber {
   id: number
   kategori: string
@@ -15,7 +14,6 @@ interface Haber {
   okunmaSuresi?: string
 }
 
-// SABİTLER
 const kategoriler = [
   { id: 'tumu', isim: 'Tümü', renk: '#1a1a1a', icon: '📰' },
   { id: 'gundem', isim: 'Gündem', renk: '#DC2626', icon: '🔴' },
@@ -52,6 +50,89 @@ function getKategoriRenk(kategori: string): string {
   return kat?.renk || '#666'
 }
 
+// REKLAM BANNER KOMPONENTİ - İhraç Fazlası Giyim
+function AdBanner({ variant = 'horizontal' }: { variant?: 'horizontal' | 'square' | 'wide' }) {
+  if (variant === 'square') {
+    return (
+      <a href="https://maps.google.com/?q=İhraç+Fazlası+Giyim+İnegöl" target="_blank" rel="noopener noreferrer" className="block group">
+        <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 rounded-2xl p-5 text-white relative overflow-hidden shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+          <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-yellow-400/20 rounded-full blur-2xl"></div>
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-2xl">👕</span>
+              <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-medium">REKLAM</span>
+            </div>
+            <h3 className="text-lg font-black leading-tight mb-1">İhraç Fazlası</h3>
+            <h4 className="text-xl font-black text-yellow-300 mb-3">GİYİM İNEGÖL</h4>
+            <div className="flex items-center gap-1 mb-3">
+              {[1,2,3,4,5].map(i => <span key={i} className="text-yellow-400 text-sm">★</span>)}
+              <span className="text-xs text-white/80 ml-1">5.0 (57)</span>
+            </div>
+            <p className="text-xs text-white/90 mb-3">Markalı ürünlerde uygun fiyatlar!</p>
+            <div className="flex items-center gap-2 text-xs text-white/80 mb-3">
+              <span>📍 Ertuğrulgazi Mah.</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs bg-green-500 px-2 py-1 rounded-full font-medium">✓ Açık</span>
+              <span className="text-xs font-bold group-hover:underline">Yol Tarifi →</span>
+            </div>
+          </div>
+        </div>
+      </a>
+    )
+  }
+
+  if (variant === 'wide') {
+    return (
+      <a href="tel:+905384793696" className="block group">
+        <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden shadow-lg hover:shadow-xl transition-all">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 relative">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl shrink-0">👕</div>
+              <div>
+                <p className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-medium inline-block mb-1">REKLAM</p>
+                <h3 className="text-xl sm:text-2xl font-black">İhraç Fazlası Giyim İnegöl</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex">{[1,2,3,4,5].map(i => <span key={i} className="text-yellow-400 text-sm">★</span>)}</div>
+                  <span className="text-xs text-white/80">5.0 (57 Yorum)</span>
+                  <span className="text-xs bg-green-500 px-2 py-0.5 rounded-full">Açık</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-center sm:text-right">
+                <p className="text-xs text-white/70">Hemen Ara</p>
+                <p className="text-lg sm:text-xl font-bold">0538 479 36 96</p>
+              </div>
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    )
+  }
+
+  // Horizontal (header banner)
+  return (
+    <a href="https://maps.google.com/?q=İhraç+Fazlası+Giyim+İnegöl" target="_blank" rel="noopener noreferrer" className="block group">
+      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 py-2.5 px-4 text-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-3 sm:gap-6 text-sm">
+          <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded font-medium shrink-0">REKLAM</span>
+          <span className="font-bold hidden sm:inline">👕 İhraç Fazlası Giyim İnegöl</span>
+          <span className="font-bold sm:hidden">👕 İhraç Fazlası Giyim</span>
+          <span className="hidden md:flex items-center gap-1">{[1,2,3,4,5].map(i => <span key={i} className="text-yellow-400">★</span>)} <span className="text-white/80 text-xs">(57)</span></span>
+          <span className="hidden lg:inline text-white/90">📍 Ertuğrulgazi, Kozluca Yolu</span>
+          <span className="bg-white text-purple-600 px-3 py-1 rounded-full text-xs font-bold group-hover:bg-yellow-400 transition-colors">📞 0538 479 36 96</span>
+        </div>
+      </div>
+    </a>
+  )
+}
+
 export default function Home() {
   const [haberler, setHaberler] = useState<Haber[]>(ornekHaberler)
   const [yukleniyor, setYukleniyor] = useState(true)
@@ -85,6 +166,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
+      {/* HEADER REKLAM BANNER */}
+      <AdBanner variant="horizontal" />
+
       {/* SON DAKİKA */}
       <div className="bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white py-2">
         <div className="max-w-7xl mx-auto px-4 flex items-center gap-4">
@@ -98,7 +182,7 @@ export default function Home() {
       </div>
 
       {/* HEADER */}
-      <header className="sticky top-0 z-50 transition-all duration-300" style={{ backgroundColor: `rgba(255,255,255,${Math.min(scrollY/100,1)})`, backdropFilter: scrollY > 0 ? 'blur(20px)' : 'none', boxShadow: scrollY > 50 ? '0 1px 3px rgba(0,0,0,0.1)' : 'none' }}>
+      <header className="sticky top-0 z-50 transition-all duration-300 bg-white" style={{ boxShadow: scrollY > 50 ? '0 1px 3px rgba(0,0,0,0.1)' : 'none' }}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-4 border-b border-gray-100">
             <button className="lg:hidden p-2 -ml-2" onClick={() => setMenuAcik(!menuAcik)}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={menuAcik ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg></button>
@@ -144,6 +228,10 @@ export default function Home() {
                   </div>
                 </div>
               </article>}
+
+              {/* HABERLER ARASI GENİŞ REKLAM */}
+              <AdBanner variant="wide" />
+
               {/* VİTRİN */}
               {vitrin.length > 0 && <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">{vitrin.map(h => <article key={h.id} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg cursor-pointer"><div className="relative aspect-[4/3] overflow-hidden"><img src={h.resim} alt={h.baslik} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /><span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-bold text-white rounded-full uppercase" style={{ backgroundColor: getKategoriRenk(h.kategori) }}>{h.kategori}</span></div><div className="p-4"><h3 className="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-red-600 mb-2">{h.baslik}</h3><p className="text-gray-500 text-sm line-clamp-2 mb-3">{h.ozet}</p><div className="flex justify-between text-xs text-gray-400"><span>{h.yazar}</span><span>{h.tarih}</span></div></div></article>)}</div>}
               {/* GRID */}
@@ -151,8 +239,12 @@ export default function Home() {
               {/* LİSTE */}
               {liste.length > 0 && <div><div className="flex items-center gap-3 mb-4"><h2 className="text-xl font-bold">Diğer Haberler</h2><div className="flex-1 h-px bg-gray-200"></div></div><div className="space-y-3">{liste.map((h, i) => <article key={h.id} className="group flex items-center gap-4 p-4 bg-white rounded-xl hover:bg-gray-50 cursor-pointer"><span className="text-3xl font-black text-gray-200 w-8">{String(i+1).padStart(2,'0')}</span><div className="flex-1"><div className="flex items-center gap-2 mb-1"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: getKategoriRenk(h.kategori) }}></span><span className="text-xs font-medium text-gray-500">{h.kategori}</span></div><h3 className="text-sm font-semibold line-clamp-1 group-hover:text-red-600">{h.baslik}</h3></div><span className="text-xs text-gray-400">{h.saat}</span></article>)}</div></div>}
             </div>
+
             {/* SIDEBAR */}
             <aside className="col-span-12 lg:col-span-4 space-y-6">
+              {/* SIDEBAR REKLAM BANNER */}
+              <AdBanner variant="square" />
+
               <div className="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-6 text-white"><div className="flex items-center gap-2 mb-4"><span className="text-sm">📍 İnegöl, Bursa</span></div><div className="flex justify-between"><div><p className="text-6xl font-light">6°</p><p className="text-blue-200 text-sm mt-1">Parçalı Bulutlu</p></div><span className="text-6xl">⛅</span></div><div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-white/20"><div className="text-center"><p className="text-blue-200 text-xs">Nem</p><p className="text-lg font-semibold">%72</p></div><div className="text-center"><p className="text-blue-200 text-xs">Rüzgar</p><p className="text-lg font-semibold">15 km/s</p></div></div></div>
               <div className="bg-white rounded-2xl p-6 shadow-sm"><h3 className="text-lg font-bold mb-4">Piyasalar</h3><div className="space-y-3">{[{isim:'Dolar',deger:'35.42',d:'+0.18',u:true},{isim:'Euro',deger:'36.85',d:'+0.12',u:true},{isim:'Sterlin',deger:'44.52',d:'-0.08',u:false},{isim:'Altın',deger:'2.892',d:'+15',u:true}].map((k,i) => <div key={i} className="flex justify-between py-3 border-b border-gray-100 last:border-0"><span className="font-medium">{k.isim}</span><div className="text-right"><p className="font-bold">{k.deger} ₺</p><p className={`text-xs ${k.u ? 'text-green-600' : 'text-red-600'}`}>{k.u ? '↑' : '↓'} {k.d}</p></div></div>)}</div></div>
               <div className="bg-white rounded-2xl p-6 shadow-sm"><h3 className="text-lg font-bold mb-4">Bizi Takip Edin</h3><div className="grid grid-cols-2 gap-3">{[{n:'Twitter',i:'𝕏',r:'bg-black'},{n:'Instagram',i:'📷',r:'bg-gradient-to-br from-purple-600 to-pink-500'},{n:'Facebook',i:'f',r:'bg-blue-600'},{n:'YouTube',i:'▶',r:'bg-red-600'}].map((s,i) => <a key={i} href="#" className={`${s.r} text-white rounded-xl p-4 flex flex-col items-center gap-1`}><span className="text-2xl">{s.i}</span><span className="text-xs">{s.n}</span></a>)}</div></div>
