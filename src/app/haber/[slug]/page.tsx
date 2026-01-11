@@ -17,6 +17,7 @@ interface Haber {
   icerik?: string
   resim_url?: string
   yazar?: string
+  kaynak_url?: string
   created_at?: string
 }
 
@@ -141,14 +142,22 @@ export default function HaberDetay() {
       {/* MAIN CONTENT */}
       <main className="max-w-4xl mx-auto px-4 py-8">
         <article>
-          {/* KATEGORİ */}
-          <div className="mb-4">
+          {/* KATEGORİ ve KAYNAK */}
+          <div className="flex items-center justify-between mb-4">
             <span 
               className="inline-block px-3 py-1 text-xs font-bold text-white rounded-full uppercase"
               style={{ backgroundColor: getKategoriRenk(haber.kategori) }}
             >
               {haber.kategori}
             </span>
+            {haber.yazar && haber.yazar !== 'Editör' && (
+              <span className="text-sm text-gray-500 flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+                Kaynak: <span className="font-medium text-gray-700">{haber.yazar}</span>
+              </span>
+            )}
           </div>
 
           {/* BAŞLIK */}
@@ -160,16 +169,18 @@ export default function HaberDetay() {
           <div className="flex items-center gap-4 text-gray-500 text-sm mb-6 pb-6 border-b">
             <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              {haber.yazar || 'Editör'}
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               {formatTarih(haber.created_at)}
             </span>
+            {haber.yazar && (
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                {haber.yazar}
+              </span>
+            )}
           </div>
 
           {/* RESİM */}
@@ -198,6 +209,36 @@ export default function HaberDetay() {
                   </p>
                 )
               ))}
+            </div>
+          )}
+
+          {/* KAYNAĞA GİT BUTONU */}
+          {haber.kaynak_url && (
+            <div className="mt-8 p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Haberin devamı için</p>
+                    <p className="font-semibold text-gray-900">{haber.yazar || 'Orijinal Kaynak'}</p>
+                  </div>
+                </div>
+                <a 
+                  href={haber.kaynak_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors shadow-lg hover:shadow-xl"
+                >
+                  Devamını Oku
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              </div>
             </div>
           )}
 
